@@ -3,20 +3,24 @@ const slugify = require('slugify');
 const AppError = require('../utils/AppError');
 const ApiFeatures = require('../utils/ApiFeatures');
 const { v4: uuidv4 } = require('uuid');
+const sharp = require('sharp');
 
 const multer = require('multer');
 
-// Disk storage
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/categories');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1]; // image/jpeg/png/...
-    const filename = `category-${uuidv4()}-${Date.now()}.${ext}`;
-    cb(null, filename);
-  }
-});
+//? Disk storage
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/categories');
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split('/')[1]; // image/jpeg/png/...
+//     const filename = `category-${uuidv4()}-${Date.now()}.${ext}`;
+//     cb(null, filename);
+//   }
+// });
+
+//? Memory storage
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
@@ -30,12 +34,26 @@ const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 const uploadCategoryImage = upload.single(`image`);
 
+const resizeImage = (req, res, next) => {
+  const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(600, 600)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/categories/${filename}`);
+
+  next();
+};
+
+const resizeCategoryImage = asyncWrapper(async (req, res, next) => {});
+
 const {
   deleteOne,
   updateOne,
   getOne,
   createOne,
-  getAll
+  getAll,
 } = require('./factoryHandlers');
 
 const Category = require('../models/Category');
@@ -56,5 +74,6 @@ module.exports = {
   getCategory,
   updateCategory,
   deleteCategory,
-  uploadCategoryImage
+  uploadCategoryImage,
+  resizeImage,
 };
