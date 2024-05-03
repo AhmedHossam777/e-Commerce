@@ -33,7 +33,7 @@ app.all('*', (req, res, next) => {
 // Global middleware for express
 app.use(globalErrorHandler);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const sever = app.listen(
   port,
   asyncWrapper(async () => {
