@@ -7,6 +7,12 @@ const Product = require('../models/Product');
 const Brand = require('../models/Brand');
 const ApiFeatures = require('../utils/ApiFeatures');
 
+const sharp = require('sharp');
+
+const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+
+const { v4: uuidv4 } = require('uuid');
+
 const {
   deleteOne,
   updateOne,
@@ -14,6 +20,25 @@ const {
   createOne,
   getAll,
 } = require('./factoryHandlers');
+
+const uploadProductCoverImage = uploadSingleImage('imageCover');
+
+const resizeImage = (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+  const filename = `imageCover-${uuidv4()}-${Date.now()}.jpeg`;
+
+  sharp(req.file.buffer)
+    .resize(600, 600)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/products/imageCover/${filename}`);
+
+  req.body.imageCover = filename; // save image into DB
+
+  next();
+};
 
 const getAllProduct = getAll(Product);
 
@@ -62,4 +87,6 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
+  uploadProductCoverImage,
+  resizeImage,
 };

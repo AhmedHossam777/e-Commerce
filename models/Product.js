@@ -92,6 +92,18 @@ productSchema.pre(/^find/, function (next) {
   next();
 });
 
+productSchema.post('init', function () {
+  if (this.imageCover) {
+    this.imageCover = `${process.env.BASE_URL}/products/imageCover/${this.imageCover}`;
+  }
+});
+
+productSchema.post('save', function () {
+  if (this.imageCover) {
+    this.imageCover = `${process.env.BASE_URL}/products/imageCover/${this.imageCover}`;
+  }
+});
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;

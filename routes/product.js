@@ -13,6 +13,8 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadProductCoverImage,
+  resizeImage,
 } = require('../controllers/product');
 
 const router = express.Router({ mergeParams: true });
@@ -20,12 +22,22 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .get(getAllProduct)
-  .post(createProductValidation, createProduct);
+  .post(
+    uploadProductCoverImage,
+    resizeImage,
+    createProductValidation,
+    createProduct
+  );
 
 router
   .route('/:id')
   .get(getProductValidation, getProduct)
-  .patch(updateProductValidation, updateProduct)
+  .patch(
+    uploadProductCoverImage,
+    resizeImage,
+    updateProductValidation,
+    updateProduct
+  )
   .delete(deleteProductValidation, deleteProduct);
 
 module.exports = router;
