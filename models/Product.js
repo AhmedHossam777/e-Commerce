@@ -96,11 +96,21 @@ productSchema.post('init', function () {
   if (this.imageCover) {
     this.imageCover = `${process.env.BASE_URL}/products/imageCover/${this.imageCover}`;
   }
+  if (this.images) {
+    this.images = this.images.map(
+      (image) => `${process.env.BASE_URL}/products/${image}`
+    );
+  }
 });
 
 productSchema.post('save', function () {
   if (this.imageCover) {
     this.imageCover = `${process.env.BASE_URL}/products/imageCover/${this.imageCover}`;
+  }
+  if (this.images) {
+    this.images = this.images.map(
+      (image) => `${process.env.BASE_URL}/products/${image}`
+    );
   }
 });
 

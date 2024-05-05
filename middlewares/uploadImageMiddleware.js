@@ -15,4 +15,18 @@ const uploadSingleImage = (field) => {
   return upload.single(field);
 };
 
-module.exports = { uploadSingleImage };
+const uploadMixOfImages = (field) => {
+  const multerStorage = multer.memoryStorage();
+  const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+      return cb(null, true);
+    } else {
+      return cb(new AppError('Please upload a valid image', 400), false); // Updated error message
+    }
+  };
+
+  const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+  return upload.fields(field);
+};
+
+module.exports = { uploadSingleImage, uploadMixOfImages };

@@ -9,7 +9,7 @@ const ApiFeatures = require('../utils/ApiFeatures');
 
 const sharp = require('sharp');
 
-const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+const { uploadMixOfImages } = require('../middlewares/uploadImageMiddleware');
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -21,21 +21,48 @@ const {
   getAll,
 } = require('./factoryHandlers');
 
-const uploadProductCoverImage = uploadSingleImage('imageCover');
+const uploadProductImages = uploadMixOfImages([
+  { name: 'images', maxCount: 5 },
+  { name: 'imageCover', maxCount: 1 },
+]);
 
-const resizeImage = (req, res, next) => {
-  if (!req.file) {
+const resizeCoverImage = async (req, res, next) => {
+  if (!req.files.imageCover) {
     return next();
   }
-  const filename = `imageCover-${uuidv4()}-${Date.now()}.jpeg`;
+  const filename = `product-Cover-${uuidv4()}-${Date.now()}.jpeg`;
+  console.log(filename);
+  console.log(req.files.imageCover.buffer);
 
-  sharp(req.file.buffer)
+  await sharp(req.files.imageCover[0].buffer)
     .resize(600, 600)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
     .toFile(`uploads/products/imageCover/${filename}`);
 
   req.body.imageCover = filename; // save image into DB
+
+  next();
+};
+
+const resizeImages = (req, res, next) => {
+  if (!req.files) {
+    return next();
+  }
+
+  req.body.images = [];
+
+  req.files.images.forEach((file) => {
+    const filename = `product-${uuidv4()}-${Date.now()}.jpeg`;
+
+    sharp(file.buffer)
+      .resize(600, 600)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`uploads/products/${filename}`);
+
+    req.body.images.push(filename); // save image into DB
+  });
 
   next();
 };
@@ -87,6 +114,7 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
-  uploadProductCoverImage,
-  resizeImage,
+  uploadProductImages,
+  resizeCoverImage,
+  resizeImages,
 };

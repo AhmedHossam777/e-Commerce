@@ -13,8 +13,9 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  uploadProductCoverImage,
-  resizeImage,
+  uploadProductImages,
+  resizeCoverImage,
+  resizeImages,
 } = require('../controllers/product');
 
 const router = express.Router({ mergeParams: true });
@@ -23,8 +24,9 @@ router
   .route('/')
   .get(getAllProduct)
   .post(
-    uploadProductCoverImage,
-    resizeImage,
+    uploadProductImages,
+    resizeCoverImage,
+    resizeImages,
     createProductValidation,
     createProduct
   );
@@ -33,8 +35,9 @@ router
   .route('/:id')
   .get(getProductValidation, getProduct)
   .patch(
-    uploadProductCoverImage,
-    resizeImage,
+    uploadProductImages,
+    resizeCoverImage,
+    resizeImages,
     updateProductValidation,
     updateProduct
   )
