@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Address is required'],
       trim: true,
     },
-    profileImage: {
+    image: {
       type: String,
       default: '',
     },

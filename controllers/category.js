@@ -6,33 +6,9 @@ const { v4: uuidv4 } = require('uuid');
 const sharp = require('sharp');
 
 const multer = require('multer');
+const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 
-//? Disk storage
-// const multerStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/categories');
-//   },
-//   filename: (req, file, cb) => {
-//     const ext = file.mimetype.split('/')[1]; // image/jpeg/png/...
-//     const filename = `category-${uuidv4()}-${Date.now()}.${ext}`;
-//     cb(null, filename);
-//   }
-// });
-
-//? Memory storage
-const multerStorage = multer.memoryStorage();
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    return cb(null, true);
-  } else {
-    return cb(new AppError('Please upload an image', 400), false);
-  }
-};
-
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
-
-const uploadCategoryImage = upload.single(`image`);
+const uploadCategoryImage = uploadSingleImage();
 
 const resizeImage = (req, res, next) => {
   if (!req.file) {
