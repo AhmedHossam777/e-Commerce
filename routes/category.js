@@ -28,7 +28,12 @@ router
 router
   .route('/:id')
   .get(getCategoryValidator, getCategory)
-  .patch(updateCategoryValidator, updateCategory)
+  .patch(
+    uploadCategoryImage,
+    resizeImage,
+    updateCategoryValidator,
+    updateCategory
+  )
   .delete(deleteCategoryValidator, deleteCategory);
 
 router.use('/:parent/subCategories', subCategoriesRoute);

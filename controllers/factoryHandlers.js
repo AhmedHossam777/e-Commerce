@@ -9,16 +9,16 @@ const deleteOne = (Model) =>
     if (!id) {
       return next(new AppError('please enter document id', 400));
     }
-    
+
     const document = await Model.findById(id);
     if (!document) {
       return next(new AppError('there is no document with that id', 404));
     }
-    
+
     await Model.findByIdAndDelete(id);
     res.status(204).json({
       status: 'success',
-      message: 'brand deleted successfully'
+      message: 'brand deleted successfully',
     });
   });
 
@@ -28,37 +28,37 @@ const updateOne = (Model) =>
     if (!id) {
       return next(new AppError('please enter a brand id', 400));
     }
-    
+
     const document = await Model.findById(id);
     if (!document) {
       return next(new AppError('there is no brand with that id', 404));
     }
-    
+
     const newDocument = await Model.findByIdAndUpdate(id, req.body, {
-      new: true
+      new: true,
     });
     if (req.body.name) {
       newDocument.slug = slugify(req.body.name);
       await newDocument.save();
     }
-    
+
     res.status(200).json({
       status: 'success',
-      newDocument
+      newDocument,
     });
   });
 
 const getOne = (Model) =>
   asyncWrapper(async (req, res, next) => {
     const { id } = req.params;
-    
+
     const document = await Model.findById(id);
     if (!document) {
       return next(new AppError(`there is no document with that id ${id}`, 404));
     }
     res.status(200).json({
       status: 'success',
-      document
+      document,
     });
   });
 
@@ -74,7 +74,7 @@ const createOne = (Model, ParentModel) =>
     const document = await Model.create({ ...req.body, parent });
     res.status(201).json({
       status: 'success',
-      document
+      document,
     });
   });
 
@@ -87,9 +87,9 @@ const getAll = (Model, ParentModel) =>
       .sort()
       .limitFields()
       .search();
-    
+
     const { mongooseQuery, paginationResult } = apiFeatures;
-    
+
     if (req.params.id) {
       const parentDocument = await ParentModel.findById(req.params.id);
       if (!parentDocument) {
@@ -105,7 +105,7 @@ const getAll = (Model, ParentModel) =>
       results: documents.length,
       status: 'success',
       paginationResult,
-      documents
+      documents,
     });
   });
 
@@ -114,5 +114,5 @@ module.exports = {
   updateOne,
   getOne,
   createOne,
-  getAll
+  getAll,
 };

@@ -35,6 +35,9 @@ const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 const uploadCategoryImage = upload.single(`image`);
 
 const resizeImage = (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
   const filename = `category-${uuidv4()}-${Date.now()}.jpeg`;
 
   sharp(req.file.buffer)
@@ -43,10 +46,10 @@ const resizeImage = (req, res, next) => {
     .jpeg({ quality: 90 })
     .toFile(`uploads/categories/${filename}`);
 
+  req.body.image = filename; // save image into DB
+
   next();
 };
-
-const resizeCategoryImage = asyncWrapper(async (req, res, next) => {});
 
 const {
   deleteOne,
