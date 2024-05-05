@@ -8,7 +8,7 @@ const sharp = require('sharp');
 const multer = require('multer');
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 
-const uploadCategoryImage = uploadSingleImage();
+const uploadCategoryImage = uploadSingleImage('image');
 
 const resizeImage = (req, res, next) => {
   if (!req.file) {

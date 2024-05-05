@@ -18,7 +18,7 @@ const {
   getAll,
 } = require('./factoryHandlers');
 
-const uploadBrandImage = uploadSingleImage();
+const uploadBrandImage = uploadSingleImage('image');
 
 const resizeImage = (req, res, next) => {
   if (!req.file) {

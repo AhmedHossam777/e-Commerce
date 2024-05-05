@@ -28,5 +28,17 @@ brandSchema.pre('save', function (next) {
   next();
 });
 
+brandSchema.post('init', function () {
+  if (this.image) {
+    this.image = `${process.env.BASE_URL}/brands/${this.image}`;
+  }
+});
+
+brandSchema.post('save', function () {
+  if (this.image) {
+    this.image = `${process.env.BASE_URL}/brands/${this.image}`;
+  }
+});
+
 const Brand = mongoose.model('Brand', brandSchema);
 module.exports = Brand;

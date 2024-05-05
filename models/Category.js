@@ -27,6 +27,18 @@ categorySchema.pre('save', async function (next) {
   next();
 });
 
+categorySchema.post('init', function () {
+  if (this.image) {
+    this.image = `${process.env.BASE_URL}/brands/${this.image}`;
+  }
+});
+
+categorySchema.post('save', function () {
+  if (this.image) {
+    this.image = `${process.env.BASE_URL}/brands/${this.image}`;
+  }
+});
+
 const Category = mongoose.model('Category', categorySchema);
 
 module.exports = Category;
