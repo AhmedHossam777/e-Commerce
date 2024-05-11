@@ -28,12 +28,12 @@ const signupValidator = [
     .withMessage('Too short email')
     .isLength({ max: 32 })
     .withMessage('Too Long email')
-    .custom((val) => {
-      User.findOne({ email: val }).then((user) => {
-        if (user) {
-          return Promise.reject(new AppError('Email is already exist', 400));
-        }
-      });
+    .custom(async (val) => {
+      const user = await User.findOne({ email: val });
+      if (user) {
+        throw new AppError('user is already exist', 400);
+      }
+      return true;
     }),
 
   check('password')
@@ -57,12 +57,11 @@ const loginValidator = [
     .withMessage('email is required')
     .isEmail()
     .withMessage('invalid email address')
-    .custom((val) => {
-      User.findOne({ email: val }).then((user) => {
-        if (!user) {
-          return Promise.reject(new AppError('user is not exist', 404));
-        }
-      });
+    .custom(async (val) => {
+      const user = await User.findOne({ email: val });
+      if (!user) {
+        throw new AppError('user is not exist', 404);
+      }
       return true;
     }),
   check('password')
@@ -85,12 +84,11 @@ const resetPasswordValidator = [
     .withMessage('Email required')
     .isEmail()
     .withMessage('Invalid email address')
-    .custom((val) => {
-      User.findOne({ email: val }).then((user) => {
-        if (!user) {
-          return Promise.reject(new AppError('user is not exist', 404));
-        }
-      });
+    .custom(async (val) => {
+      const user = await User.findOne({ email: val });
+      if (!user) {
+        throw new AppError('user is not exist', 404);
+      }
       return true;
     }),
   check('otp').isEmpty().withMessage('OTP required'),
