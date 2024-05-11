@@ -12,6 +12,7 @@ const categoryRoutes = require('./routes/category');
 const subCategoryRoutes = require('./routes/subCategory');
 const brandRoutes = require('./routes/brand');
 const productRoutes = require('./routes/product');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Routes
+app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/subCategories', subCategoryRoutes);
 app.use('/api/v1/brands', brandRoutes);

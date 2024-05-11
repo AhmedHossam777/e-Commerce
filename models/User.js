@@ -63,7 +63,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-productSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('username')) return next();
   this.slug = slugify(this.username);
   next();

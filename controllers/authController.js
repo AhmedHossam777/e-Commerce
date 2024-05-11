@@ -17,15 +17,6 @@ const {
 } = require('../utils/OTPServices');
 
 const register = asyncWrapper(async (req, res, next) => {
-  const { username, email, password, phone } = req.body;
-  if (!username || !email || !password || !phone) {
-    return next(new AppError('please provide all fields', 400));
-  }
-  const DuplicateUser = await User.findOne({ email: email });
-  if (DuplicateUser) {
-    return next(new AppError('user already exist please login', 400));
-  }
-
   const user = await User.create({ username, email, password, phone });
 
   const [accessToken, refreshToken] = await Promise.all([
@@ -43,9 +34,7 @@ const register = asyncWrapper(async (req, res, next) => {
 
 const login = asyncWrapper(async (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new AppError('please provide all fields', 401));
-  }
+
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('invalid email or password', 401));
@@ -66,13 +55,6 @@ const secret = generateSecret();
 
 const forgetPassword = asyncWrapper(async (req, res, next) => {
   const { email } = req.body;
-  if (!email) {
-    return next(new AppError('please provide your email', 400));
-  }
-  const user = await User.findOne({ email: email });
-  if (!user) {
-    return next(new AppError('no user found with this email', 404));
-  }
   const otp = generateOTP(secret);
 
   await emailService.sendVerificationEmail(email, otp);
