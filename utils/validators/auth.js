@@ -27,14 +27,7 @@ const signupValidator = [
     .isLength({ min: 5 })
     .withMessage('Too short email')
     .isLength({ max: 32 })
-    .withMessage('Too Long email')
-    .custom(async (val) => {
-      const user = await User.findOne({ email: val });
-      if (user) {
-        throw new AppError('user is already exist', 400);
-      }
-      return true;
-    }),
+    .withMessage('Too Long email'),
 
   check('password')
     .notEmpty()
@@ -56,14 +49,8 @@ const loginValidator = [
     .notEmpty()
     .withMessage('email is required')
     .isEmail()
-    .withMessage('invalid email address')
-    .custom(async (val) => {
-      const user = await User.findOne({ email: val });
-      if (!user) {
-        throw new AppError('user is not exist', 404);
-      }
-      return true;
-    }),
+    .withMessage('invalid email address'),
+
   check('password')
     .notEmpty()
     .withMessage('Password required')
@@ -83,14 +70,8 @@ const resetPasswordValidator = [
     .notEmpty()
     .withMessage('Email required')
     .isEmail()
-    .withMessage('Invalid email address')
-    .custom(async (val) => {
-      const user = await User.findOne({ email: val });
-      if (!user) {
-        throw new AppError('user is not exist', 404);
-      }
-      return true;
-    }),
+    .withMessage('Invalid email address'),
+
   check('otp').isEmpty().withMessage('OTP required'),
 
   validationMiddleware,
@@ -120,13 +101,7 @@ const forgetPasswordValidator = [
     .notEmpty()
     .withMessage('email is required')
     .isEmail()
-    .withMessage('invalid email address')
-    .custom(async (val) => {
-      const user = await User.findOne({ email: val });
-      if (!user) {
-        throw new AppError('user is not exist', 404);
-      }
-    }),
+    .withMessage('invalid email address'),
   validationMiddleware,
 ];
 

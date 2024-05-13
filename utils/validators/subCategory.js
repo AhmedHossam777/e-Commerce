@@ -18,7 +18,13 @@ const getSubCategoryValidation = [
 ];
 
 const createSubCategoryValidation = [
-  check('parent').isMongoId().withMessage('invalid category id format'),
+  check('parent')
+    .isMongoId()
+    .withMessage('invalid category id format')
+    .notEmpty()
+    .withMessage('parent category is required'),
+
+  check('name').notEmpty().withMessage('subCategory name is required'),
   validationMiddleware,
 ];
 

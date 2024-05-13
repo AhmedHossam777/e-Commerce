@@ -9,6 +9,7 @@ const getUserValidation = [
   validationMiddleware,
 ];
 
+
 module.exports = {
   getUserValidation,
 };

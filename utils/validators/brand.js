@@ -3,8 +3,14 @@ const {
   validationMiddleware,
 } = require('../../middlewares/validationMiddleware');
 
+const createBrandValidator = [
+  check('name').notEmpty().withMessage('Brand name is required'),
+];
+
 const getBrandValidations = [
-  check('id').isMongoId().withMessage('invalid mongo id format'),
+  check('id')
+    .isMongoId()
+    .withMessage('invalid mongo id format'),
   validationMiddleware,
 ];
 
@@ -22,4 +28,5 @@ module.exports = {
   deleteBrandValidations,
   getBrandValidations,
   updateBrandValidations,
+  createBrandValidator,
 };

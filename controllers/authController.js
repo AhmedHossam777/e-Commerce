@@ -17,7 +17,12 @@ const {
 } = require('../utils/OTPServices');
 
 const register = asyncWrapper(async (req, res, next) => {
-  const user = await User.create({ username, email, password, phone });
+  const { email } = req.body;
+  const dubUser = await User.findOne({ email: email });
+  if (dubUser) {
+    return next(new AppError('user already exist', 400));
+  }
+  const user = await User.create(req.body);
 
   const [accessToken, refreshToken] = await Promise.all([
     generateAccessToken(user._id),
@@ -55,6 +60,10 @@ const secret = generateSecret();
 
 const forgetPassword = asyncWrapper(async (req, res, next) => {
   const { email } = req.body;
+  const user = await User.findOne({ email: email });
+  if (!user) {
+    return next(new AppError('no user found with this email', 404));
+  }
   const otp = generateOTP(secret);
 
   await emailService.sendVerificationEmail(email, otp);
