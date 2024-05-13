@@ -18,7 +18,7 @@ const deleteOne = (Model) =>
     await Model.findByIdAndDelete(id);
     res.status(204).json({
       status: 'success',
-      message: 'brand deleted successfully',
+      message: 'document deleted successfully',
     });
   });
 
@@ -26,12 +26,12 @@ const updateOne = (Model) =>
   asyncWrapper(async (req, res, next) => {
     const { id } = req.params || req.user;
     if (!id) {
-      return next(new AppError('please enter a brand id', 400));
+      return next(new AppError('please enter a document id', 400));
     }
 
     const document = await Model.findById(id);
     if (!document) {
-      return next(new AppError('there is no brand with that id', 404));
+      return next(new AppError('there is no document with that id', 404));
     }
 
     const newDocument = await Model.findByIdAndUpdate(id, req.body, {

@@ -66,9 +66,7 @@ const forgetPassword = asyncWrapper(async (req, res, next) => {
 
 const resetPassword = asyncWrapper(async (req, res, next) => {
   const { email, otp, password } = req.body;
-  if (!email || !otp || !password) {
-    return next(new AppError('please provide all fields', 400));
-  }
+
   const user = await User.findOne({ email: email });
   if (!user) {
     return next(new AppError('no user found with this email', 404));
