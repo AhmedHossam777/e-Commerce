@@ -1,7 +1,12 @@
 const auth = require('../middlewares/auth');
 const isAdmin = require('../middlewares/isAdmin');
 
-const { getUserValidation } = require('../utils/validators/user');
+const {
+  getUserValidation,
+  updateUserValidation,
+  deleteUserValidation,
+} = require('../utils/validators/user');
+
 const {
   signupValidator,
   loginValidator,
@@ -15,8 +20,8 @@ const {
   getUser,
   updateUser,
   deleteUser,
-  uploadProfileImage,
-  deleteProfileImage,
+  resizeImage,
+  uploadUserImage,
 } = require('../controllers/user');
 
 const {
@@ -43,11 +48,8 @@ router.route('/logout').get(logout);
 router
   .route('/')
   .get(auth, isAdmin, getAllUsers)
-  .patch(auth, updateUser)
-  .delete(auth, deleteUser);
+  .patch(auth, uploadUserImage, resizeImage, updateUserValidation, updateUser)
+  .delete(auth, deleteUserValidation, deleteUser);
 router.route('/:id').get(auth, getUserValidation, getUser);
-
-router.route('/upload-profile-image').patch(auth, uploadProfileImage);
-router.route('/delete-profile-image').patch(auth, deleteProfileImage);
 
 module.exports = router;

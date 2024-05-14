@@ -3,6 +3,8 @@ const User = require('../models/User');
 const AppError = require('../utils/AppError');
 const ApiFeatures = require('../utils/ApiFeatures');
 
+const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
+
 const { deleteOne, getOne, updateOne, getAll } = require('./factoryHandlers');
 
 const getAllUsers = getAll(User);
@@ -10,46 +12,30 @@ const updateUser = updateOne(User);
 const getUser = getOne(User);
 const deleteUser = deleteOne(User);
 
-const uploadProfileImage = asyncWrapper(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    return next(new AppError('unAuthorized', 401));
-  }
+const uploadUserImage = uploadSingleImage('image');
+
+const resizeImage = (req, res, next) => {
   if (!req.file) {
-    return next(new AppError('Please upload an image', 400));
+    return next();
   }
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      profileImage: req.file.path,
-    },
-    { new: true }
-  );
+  const filename = `user-${uuidv4()}-${Date.now()}.jpeg`;
 
-  res.status(200).json({ status: 'success', updatedUser });
-});
+  sharp(req.file.buffer)
+    .resize(600, 600)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/users/${filename}`);
 
-const deleteProfileImage = asyncWrapper(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  if (!user) {
-    return next(new AppError('unAuthorized', 401));
-  }
-  const updated = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      profileImage: '',
-    },
-    { new: true }
-  );
+  req.body.image = filename; // save image into DB
 
-  res.status(200).json({ status: 'success', updated });
-});
+  next();
+};
 
 module.exports = {
   getAllUsers,
   getUser,
   updateUser,
   deleteUser,
-  uploadProfileImage,
-  deleteProfileImage,
+  resizeImage,
+  uploadUserImage,
 };
