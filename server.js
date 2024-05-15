@@ -13,7 +13,7 @@ const subCategoryRoutes = require( './routes/subCategory' );
 const brandRoutes = require( './routes/brand' );
 const productRoutes = require( './routes/product' );
 const userRoutes = require( './routes/user' );
-const reviewRoures = require( './routes/review' );
+const reviewRoutes = require( './routes/review' );
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.use( '/api/v1/categories', categoryRoutes );
 app.use( '/api/v1/subCategories', subCategoryRoutes );
 app.use( '/api/v1/brands', brandRoutes );
 app.use( '/api/v1/products', productRoutes );
-app.use( '/api/v1/reviews', reviewRoures );
+app.use( '/api/v1/reviews', reviewRoutes );
 
 // Error handling middlewares
 app.all( '*', ( req, res, next ) => {

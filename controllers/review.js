@@ -1,5 +1,5 @@
 const Review = require( '../models/Review' );
-const {getAll, getOne, deleteOne, updateOne, createOne} = require( 'factoryHandlers' );
+const {getAll, getOne, deleteOne, updateOne, createOne} = require( './factoryHandlers' );
 const asyncWrapper = require( 'express-async-handler' );
 const slugify = require( 'slugify' );
 const AppError = require( '../utils/AppError' );
