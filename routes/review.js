@@ -3,6 +3,8 @@ const {isBelong} = require( '../middlewares/isBelong' );
 const Review = require( '../models/Review' );
 
 const {getReview, getAllReviews, createReview, updateReview, deleteReview} = require( '../controllers/review' );
+const {checkProductExists} = require( '../utils/validators/checkExistence' );
+
 const {
 	createReviewValidation,
 	updateReviewValidation,
@@ -16,7 +18,7 @@ const router = express.Router();
 
 router.route( '/' )
 	.get( getAllReviews )
-	.post( auth, createReviewValidation, createReview );
+	.post( auth, checkProductExists, createReviewValidation, createReview );
 
 router.route( '/:id' )
 	.get( getReviewValidation, getReview )
