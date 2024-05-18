@@ -3,6 +3,12 @@ const {check} = require( 'express-validator' );
 
 const getReviewValidation = [
 	check( 'id' ).isMongoId().withMessage( 'invalid mongoId' ),
+	check( 'productId' ).optional().isMongoId().withMessage( 'invalid product id' ),
+	validationMiddleware,
+];
+
+const getReviewsValidation = [
+	check( 'productId' ).optional().isMongoId().withMessage( 'invalid product id' ),
 	validationMiddleware,
 ];
 
@@ -18,6 +24,7 @@ const createReviewValidation = [
 	} ).withMessage( 'rating must be between 1 and 5' ),
 	
 	check( 'product' ).isMongoId().withMessage( 'invalid product id' ),
+	check( 'productId' ).optional().isMongoId().withMessage( 'invalid product id' ),
 	validationMiddleware,
 ];
 
@@ -37,4 +44,5 @@ module.exports = {
 	deleteReviewValidation,
 	createReviewValidation,
 	updateReviewValidation,
+	getReviewsValidation,
 };

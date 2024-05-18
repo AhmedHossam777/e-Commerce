@@ -21,6 +21,7 @@ const {
 } = require( '../controllers/product' );
 
 const router = express.Router( {mergeParams: true} );
+const reviewRoutes = require( './review' );
 
 router
 	.route( '/' )
@@ -47,5 +48,8 @@ router
 		updateProduct,
 	)
 	.delete( deleteProductValidation, deleteProduct );
+
+//? Nested routes with reviews
+router.use( '/:productId/reviews', reviewRoutes );
 
 module.exports = router;

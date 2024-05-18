@@ -36,6 +36,6 @@ router
 	)
 	.delete( deleteCategoryValidator, deleteCategory );
 
-router.use( '/:parent/subCategories', subCategoriesRoute );
+router.use( '/:category/subCategories', subCategoriesRoute );
 
 module.exports = router;

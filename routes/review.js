@@ -10,14 +10,15 @@ const {
 	updateReviewValidation,
 	deleteReviewValidation,
 	getReviewValidation,
+	getReviewsValidation,
 } = require( '../utils/validators/reveiw' );
 
 const auth = require( '../middlewares/auth' );
 
-const router = express.Router();
+const router = express.Router( {mergeParams: true} );
 
 router.route( '/' )
-	.get( getAllReviews )
+	.get( getReviewsValidation, getAllReviews )
 	.post( auth, checkProductExists, createReviewValidation, createReview );
 
 router.route( '/:id' )

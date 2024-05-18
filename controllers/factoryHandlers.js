@@ -53,7 +53,8 @@ const getOne = ( Model, poplationOpt ) =>
 		const {id} = req.params;
 		
 		// build query
-		let query = await Model.findById( id );
+		let query = Model.findById( id );
+		
 		if (poplationOpt) {
 			query = query.populate( poplationOpt );
 		}
@@ -68,24 +69,22 @@ const getOne = ( Model, poplationOpt ) =>
 		} );
 	} );
 
-const createOne = ( Model, ParentModel ) =>
+const createOne = ( Model ) =>
 	asyncWrapper( async ( req, res, next ) => {
-		const parent = req.body.parent || req.params.parent;
-		if (req.body.parent || req.params.parent) {
-			const parentDocument = await ParentModel.findById( parent );
-			if (!parentDocument) {
-				return next( new AppError( 'there is no parent with that id', 404 ) );
-			}
+		const category = req.body.category || req.params.category;
+		const product = req.body.product || req.params.product;
+		let user = '';
+		if (req.user) {
+			user = req.user.id;
 		}
-		const user = req.user.id;
-		const document = await Model.create( {...req.body, user, parent} );
+		const document = await Model.create( {...req.body, user, category, product} );
 		res.status( 201 ).json( {
 			status: 'success',
 			document,
 		} );
 	} );
 
-const getAll = ( Model, ParentModel ) =>
+const getAll = ( Model ) =>
 	asyncWrapper( async ( req, res, next ) => {
 		const numberOfDocuments = await Model.countDocuments();
 		const apiFeatures = new ApiFeatures( Model.find(), req.query )
@@ -95,15 +94,15 @@ const getAll = ( Model, ParentModel ) =>
 			.limitFields()
 			.search();
 		
-		const {mongooseQuery, paginationResult} = apiFeatures;
+		let {mongooseQuery, paginationResult} = apiFeatures;
 		
-		if (req.params.parent) {
-			const parentDocument = await ParentModel.findById( req.params.parent );
-			if (!parentDocument) {
-				return next( new AppError( 'there is no document with that id', 404 ) );
-			}
-			apiFeatures.mongooseQuery = Model.find( {parent: req.params.parent} );
+		if (req.params.category) {
+			mongooseQuery = Model.findOne( {category: req.params.category} );
 		}
+		if (req.params.productId) {
+			mongooseQuery = Model.findOne( {product: req.params.productId} );
+		}
+		
 		const documents = await mongooseQuery;
 		if (!documents) {
 			return next( new AppError( 'the is no documents yet', 404 ) );

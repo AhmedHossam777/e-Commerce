@@ -6,18 +6,21 @@ const Product = require( '../../models/Product' );
 const asyncWrapper = require( 'express-async-handler' );
 
 const checkCategoryExists = asyncWrapper( async ( req, res, next ) => {
-	const {category} = req.body;
-	const categoryExists = await Category.findById( category );
-	if (!categoryExists) {
-		return next( new AppError( 'Category does not exist', 404 ) );
+	let category = req.body.category || req.params.category;
+	if (category) {
+		const categoryExists = await Category.findById( category );
+		console.log( categoryExists );
+		if (!categoryExists) {
+			return next( new AppError( 'Category does not exist', 404 ) );
+		}
 	}
 	next();
 } );
 const checkSubcategoryExists = asyncWrapper( async ( req, res, next ) => {
 	if (req.body.subCategory) {
 		const {subCategory} = req.body;
-		const category = req.body.category || req.params.parent;
-		const subCategoryExists = await SubCategory.findOne( {_id: subCategory, category} );
+		const category = req.body.category || req.params.category;
+		const subCategoryExists = await SubCategory.findOne( {_id: subCategory, category: category} );
 		if (!subCategoryExists) {
 			return next( new AppError( 'SubCategory does not exist', 404 ) );
 		}
