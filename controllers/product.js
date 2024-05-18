@@ -1,6 +1,7 @@
 const Product = require( '../models/Product' );
 
 const sharp = require( 'sharp' );
+const asyncWrapper = require( 'express-async-handler' );
 
 const {uploadMixOfImages} = require( '../middlewares/uploadImageMiddleware' );
 
@@ -18,15 +19,12 @@ const uploadProductImages = uploadMixOfImages( [
 	{name: 'images', maxCount: 5},
 	{name: 'imageCover', maxCount: 1},
 ] );
-
-const resizeCoverImage = async ( req, res, next ) => {
-	if (!req.files.imageCover) {
-		console.log( req.files );
+const resizeCoverImage = asyncWrapper( async ( req, res, next ) => {
+	console.log( 'Files received:', req.files );
+	if (!req.files || !req.files.imageCover || req.files.imageCover.length === 0) {
 		return next();
 	}
 	const filename = `product-Cover-${uuidv4()}-${Date.now()}.jpeg`;
-	console.log( filename );
-	console.log( req.files.imageCover.buffer );
 	
 	await sharp( req.files.imageCover[0].buffer )
 		.resize( 600, 600 )
@@ -37,29 +35,30 @@ const resizeCoverImage = async ( req, res, next ) => {
 	req.body.imageCover = filename; // save image into DB
 	
 	next();
-};
+} );
 
-const resizeImages = ( req, res, next ) => {
-	if (!req.files) {
+const resizeImages = asyncWrapper( async ( req, res, next ) => {
+	console.log( 'Files received:', req.files );
+	if (!req.files || !req.files.images || req.files.images.length === 0) {
 		return next();
 	}
 	
 	req.body.images = [];
 	
-	req.files.images.forEach( ( file ) => {
+	for ( const file of req.files.images ) {
 		const filename = `product-${uuidv4()}-${Date.now()}.jpeg`;
 		
-		sharp( file.buffer )
+		await sharp( file.buffer )
 			.resize( 600, 600 )
 			.toFormat( 'jpeg' )
 			.jpeg( {quality: 90} )
 			.toFile( `uploads/products/${filename}` );
 		
 		req.body.images.push( filename ); // save image into DB
-	} );
+	}
 	
 	next();
-};
+} );
 
 const getAllProduct = getAll( Product );
 
