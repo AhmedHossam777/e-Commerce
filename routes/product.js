@@ -50,6 +50,6 @@ router
 	.delete( deleteProductValidation, deleteProduct );
 
 //? Nested routes with reviews
-router.use( '/:productId/reviews', reviewRoutes );
+router.use( '/:product/reviews', reviewRoutes );
 
 module.exports = router;

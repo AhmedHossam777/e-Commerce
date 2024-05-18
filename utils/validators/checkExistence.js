@@ -37,8 +37,10 @@ const checkBrandExists = asyncWrapper( async ( req, res, next ) => {
 } );
 
 const checkProductExists = asyncWrapper( async ( req, res, next ) => {
-	const {product} = req.body;
+	const product = req.body.product || req.params.product;
+	console.log( product );
 	const productExists = await Product.findById( product );
+	console.log( productExists );
 	if (!productExists) {
 		return next( new AppError( 'Product not found', 404 ) );
 	}

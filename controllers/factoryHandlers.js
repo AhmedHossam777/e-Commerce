@@ -51,9 +51,14 @@ const updateOne = ( Model ) =>
 const getOne = ( Model, poplationOpt ) =>
 	asyncWrapper( async ( req, res, next ) => {
 		const {id} = req.params;
+		let product = '';
+		if (req.params.product) {
+			product = req.params.product;
+		}
+		console.log( product );
 		
 		// build query
-		let query = Model.findById( id );
+		let query = Model.findOne( {_id: id, product} );
 		
 		if (poplationOpt) {
 			query = query.populate( poplationOpt );
@@ -61,7 +66,7 @@ const getOne = ( Model, poplationOpt ) =>
 		
 		const document = await query;
 		if (!document) {
-			return next( new AppError( `there is no document with that id ${id}`, 404 ) );
+			return next( new AppError( `Document not found`, 404 ) );
 		}
 		res.status( 200 ).json( {
 			status: 'success',
@@ -99,8 +104,8 @@ const getAll = ( Model ) =>
 		if (req.params.category) {
 			mongooseQuery = Model.findOne( {category: req.params.category} );
 		}
-		if (req.params.productId) {
-			mongooseQuery = Model.findOne( {product: req.params.productId} );
+		if (req.params.product) {
+			mongooseQuery = Model.findOne( {product: req.params.product} );
 		}
 		
 		const documents = await mongooseQuery;

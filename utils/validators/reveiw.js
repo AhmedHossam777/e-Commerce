@@ -24,7 +24,7 @@ const createReviewValidation = [
 	} ).withMessage( 'rating must be between 1 and 5' ),
 	
 	check( 'product' ).isMongoId().withMessage( 'invalid product id' ),
-	check( 'productId' ).optional().isMongoId().withMessage( 'invalid product id' ),
+	
 	validationMiddleware,
 ];
 
