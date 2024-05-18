@@ -48,11 +48,17 @@ const updateOne = ( Model ) =>
 		} );
 	} );
 
-const getOne = ( Model ) =>
+const getOne = ( Model, poplationOpt ) =>
 	asyncWrapper( async ( req, res, next ) => {
 		const {id} = req.params;
 		
-		const document = await Model.findById( id );
+		// build query
+		let query = await Model.findById( id );
+		if (poplationOpt) {
+			query = query.populate( poplationOpt );
+		}
+		
+		const document = await query;
 		if (!document) {
 			return next( new AppError( `there is no document with that id ${id}`, 404 ) );
 		}

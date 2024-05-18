@@ -62,7 +62,7 @@ const resizeImages = asyncWrapper( async ( req, res, next ) => {
 
 const getAllProduct = getAll( Product );
 
-const getProduct = getOne( Product );
+const getProduct = getOne( Product, 'reviews' );
 
 const updateProduct = updateOne( Product );
 

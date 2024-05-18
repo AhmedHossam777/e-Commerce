@@ -12,23 +12,22 @@ const deleteReviewValidation = [
 ];
 
 const createReviewValidation = [
-	check( 'rating' ).notEmpty().withMessage( 'rating is required' )
-		.isLength( {
-			min: 1,
-			max: 5,
-		} ).withMessage( 'rating must be between 1 and 5' ),
+	check( 'ratings' ).isFloat( {
+		min: 1,
+		max: 5,
+	} ).withMessage( 'rating must be between 1 and 5' ),
 	
-	check( 'user' ).isMongoId().withMessage( 'invalid user id' ),
 	check( 'product' ).isMongoId().withMessage( 'invalid product id' ),
 	validationMiddleware,
 ];
 
 const updateReviewValidation = [
-	check( 'rating' ).notEmpty().withMessage( 'rating is required' )
-		.isLength( {
+	check( 'ratings' ).notEmpty().withMessage( 'rating is required' )
+		.isFloat( {
 			min: 1,
 			max: 5,
 		} ).withMessage( 'rating must be between 1 and 5' ),
+	
 	check( 'id' ).isMongoId().withMessage( 'invalid id' ),
 	validationMiddleware,
 ];

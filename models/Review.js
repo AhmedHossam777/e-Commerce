@@ -6,8 +6,6 @@ const reviewSchema = new mongoose.Schema( {
 	},
 	ratings: {
 		type: Number,
-		min: [1, 'Min rating value is 1.0'],
-		max: [1, 'Max rating value is 5.0'],
 		require: [true, 'rating is required'],
 	},
 	user: {
@@ -21,6 +19,14 @@ const reviewSchema = new mongoose.Schema( {
 		required: [true, 'product id is required'],
 	},
 }, {timestamps: true, virtuals: true, validateBeforeSave: true} );
+
+reviewSchema.pre( /^find/, function ( next ) { // populate user field with username
+	this.populate( {
+		path: 'user',
+		select: 'username',
+	} );
+	next();
+} );
 
 const Review = mongoose.model( 'Review', reviewSchema );
 
