@@ -4,8 +4,9 @@ const sharp = require( 'sharp' );
 const {uploadSingleImage} = require( '../middlewares/uploadImageMiddleware' );
 
 const uploadCategoryImage = uploadSingleImage( 'image' );
+const asyncWrapper = require( 'express-async-handler' );
 
-const resizeImage = ( req, res, next ) => {
+const resizeImage = asyncWrapper( ( req, res, next ) => {
 	if (!req.file) {
 		return next();
 	}
@@ -20,7 +21,7 @@ const resizeImage = ( req, res, next ) => {
 	req.body.image = filename; // save image into DB
 	
 	next();
-};
+} );
 
 const {
 	deleteOne,

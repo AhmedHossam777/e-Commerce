@@ -3,6 +3,7 @@ const User = require( '../models/User' );
 const {uploadSingleImage} = require( '../middlewares/uploadImageMiddleware' );
 
 const {deleteOne, getOne, updateOne, getAll} = require( './factoryHandlers' );
+const asyncWrapper = require( 'express-async-handler' );
 
 const getAllUsers = getAll( User );
 const updateUser = updateOne( User );
@@ -11,7 +12,7 @@ const deleteUser = deleteOne( User );
 
 const uploadUserImage = uploadSingleImage( 'image' );
 
-const resizeImage = ( req, res, next ) => {
+const resizeImage = asyncWrapper( ( req, res, next ) => {
 	if (!req.file) {
 		return next();
 	}
@@ -26,7 +27,7 @@ const resizeImage = ( req, res, next ) => {
 	req.body.image = filename; // save image into DB
 	
 	next();
-};
+} );
 
 module.exports = {
 	getAllUsers,
